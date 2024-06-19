@@ -18,6 +18,6 @@ down:
 	docker compose down
 
 clean:
-	make stop
+	make down
 	docker volume rm $(shell docker volume ls -qf dangling=true)
 	docker rmi $(shell docker images -qf dangling=true)
