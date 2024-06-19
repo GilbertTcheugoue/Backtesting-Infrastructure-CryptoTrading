@@ -1,29 +1,20 @@
-# 
 FROM python:3.9
 
-# 
 WORKDIR /code
 
-# 
 ADD ./requirements.txt /code/requirements.txt
 
-# Update the system and install entr application
 RUN apt-get update && apt-get install -y entr
 
-# 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# 
+# Copy app and scripts directories
 ADD ./app /code/app
+ADD ./scripts /code/scripts
 
-# make the script start.sh executable
-COPY ./watch_and_restart.sh /code/watch_and_restart.sh
-RUN chmod +x ./watch_and_restart.sh
+# Make scripts executable (within the scripts directory)
+RUN chmod +x ./scripts/watch_and_restart.sh
+RUN chmod +x ./scripts/start.sh
 
-COPY ./start.sh /code/start.sh
-RUN chmod +x ./start.sh
-# 
-# CMD ["fastapi", "run", "app/main.py", "--port", "80"]
-# CMD ls app/*.py | entr -n -r ./start.sh
-
-CMD ./watch_and_restart.sh
+# Use watch_and_restart.sh to start the app and handle restarts
+CMD ["./scripts/watch_and_restart.sh"]
