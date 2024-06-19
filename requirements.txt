@@ -3,3 +3,4 @@ backtrader[plotting]
 yfinance
 matplotlib
 ipywidgets==7.7.1
+python-binance
