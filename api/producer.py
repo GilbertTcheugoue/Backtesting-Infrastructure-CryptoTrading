@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 # Kafka broker URL
-KAFKA_BROKER_URL = "localhost:9092"  # Replace with your Kafka broker's address
+KAFKA_BROKER_URL = "localhost:9092"  
 
 # Create a KafkaProducer instance
 producer = KafkaProducer(
