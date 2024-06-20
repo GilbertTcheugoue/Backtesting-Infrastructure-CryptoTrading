@@ -1,52 +1,54 @@
+from fastapi import FastAPI, HTTPException, status
+from pydantic import BaseModel
 from kafka import KafkaProducer
 import json
-import pandas as pd
+
+# Create FastAPI app
+app = FastAPI()
 
 # Kafka broker URL
-KAFKA_BROKER_URL = "localhost:9092"  
+KAFKA_BROKER_URL = "localhost:9092"  # Replace with your Kafka broker's address
 
-# Create a KafkaProducer instance
+# Create KafkaProducer instance
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_BROKER_URL,
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
-# define DataFrame 
-data = {
-    "Date": ["2023-06-20", "2023-06-21", "2023-06-22", "2023-06-23", "2023-06-26"],
-    "Open": [15.99, 15.66, 14.30, 13.64, 13.87],
-    "High": [16.889999, 15.755000, 14.440000, 14.140000, 14.420000],
-    "Low": [15.58, 14.37, 13.86, 13.56, 13.83],
-    "Close": [15.79, 14.64, 14.05, 14.03, 13.94],
-    "Adj Close": [15.79, 14.64, 14.05, 14.03, 13.94],
-    "Volume": [81335000, 97885000, 103461000, 74640600, 50679900]
-}
-df = pd.DataFrame(data)
+# Pydantic model for scene parameters
+class SceneParameters(BaseModel):
+    scene_id: str
+    parameter1: float
+    parameter2: float
+    parameter3: int
 
-def send_stock_data_to_kafka(df):
-    """
-    Sends stock data from DataFrame to Kafka topic 'stock_data'.
-    
-    Args:
-        df (pd.DataFrame): DataFrame containing stock data.
-    """
-    for index, row in df.iterrows():
-        # Convert each row to a dictionary
-        data = {
-            "Date": row["Date"],
-            "Open": row["Open"],
-            "High": row["High"],
-            "Low": row["Low"],
-            "Close": row["Close"],
-            "Adj Close": row["Adj Close"],
-            "Volume": row["Volume"]
+# Endpoint to receive scene parameters and send to Kafka
+@app.post("/send_scene_parameters/", status_code=status.HTTP_202_ACCEPTED)
+async def send_scene_parameters(scene_params: SceneParameters):
+    try:
+        # Construct message payload
+        message = {
+            "scene_id": scene_params.scene_id,
+            "parameter1": scene_params.parameter1,
+            "parameter2": scene_params.parameter2,
+            "parameter3": scene_params.parameter3
         }
-        
-        # Send the data to Kafka
-        producer.send('stock_data', value=data)
+
+        # Send message to Kafka topic 'scene_parameters'
+        producer.send('scene_parameters', value=message)
         producer.flush()  # Ensure all messages are sent
+        
+        # Return success message to frontend
+        return {"message": "Scene parameters sent to Kafka successfully"}
 
-        print(f"Sent message to Kafka: {data}")
+    except Exception as e:
+        # Log the error (optional)
+        print(f"Error sending scene parameters to Kafka: {e}")
+        # Raise HTTPException with 500 Internal Server Error status code
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error sending scene parameters to Kafka")
 
-# Example usage
-send_stock_data_to_kafka(df)
+# Run the FastAPI app with uvicorn server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+
