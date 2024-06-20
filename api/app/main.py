@@ -41,7 +41,18 @@ def consume_messages():
 # Add an endpoint to your FastAPI application that publishes messages to a Kafka topic.
 @app.post("/produce/")
 async def produce_message(message: dict):
-    producer.send('fastapi_topic', value=message)
+    """
+     Documentation for the endpoint
+
+    Args:
+        message (dict): The message to be produced to Kafka
+
+    Returns:
+        dict: A response message
+    """
+
+    # Publish the message to the Kafka topic 'stock_data'
+    producer.send('stock_data', value=message)
     producer.flush()
     return {"message": "Produced to Kafka", "data": message}
 

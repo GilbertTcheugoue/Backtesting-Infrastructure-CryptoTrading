@@ -7,8 +7,12 @@ run:
 run-dev:
 	fastapi dev api/main.py
 
-build:
-	docker compose build
+build-api:
+	docker compose build api
+	make up
+
+build-pipeline:
+	docker compose build data-pipeline
 	make up
 
 up:

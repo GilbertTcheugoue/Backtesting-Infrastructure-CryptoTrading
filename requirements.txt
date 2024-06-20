@@ -11,3 +11,4 @@ tabulate
 confluent-kafka
 rich
 fastapi
+psycopg2-binary
