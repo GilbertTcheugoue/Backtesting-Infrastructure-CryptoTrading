@@ -12,12 +12,16 @@ RUN apt-get update && apt-get install -y entr
 # Install requirements
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# Copy app and start_and_watch.sh script
+# Copy app files
 ADD ./app /code/app
-ADD ./start_and_watch.sh /code/start_and_watch.sh
+
+# Copy start_and_watch.sh script
+# ADD ./start_and_watch.sh /code/start_and_watch.sh
 
 # Make script executable
-RUN chmod +x ./start_and_watch.sh
+# RUN chmod +x ./start_and_watch.sh
 
 # Use start_and_watch.sh to start the app and handle restarts on files changes
-CMD ["./start_and_watch.sh"]
+# CMD ["./start_and_watch.sh"]
+
+CMD uvicorn app.main:app --reload

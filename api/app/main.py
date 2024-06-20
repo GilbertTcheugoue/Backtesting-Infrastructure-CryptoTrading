@@ -3,6 +3,12 @@ from kafka import KafkaProducer, KafkaConsumer
 import threading
 import json
 import logging
+import coloredlogs
+
+# Create a logger object.
+# logger = logging.getLogger(__name__)
+
+coloredlogs.install()  # install a handler on the root logger
 
 app = FastAPI()
 
@@ -15,10 +21,9 @@ producer = KafkaProducer(
 )
 
 def consume_messages():
-    logging.basicConfig(level=logging.INFO)
     try:
         consumer = KafkaConsumer(
-            'fastapi_topic',
+            'stock_data',
             bootstrap_servers=['kafka:9092'],
             auto_offset_reset='earliest',
             value_deserializer=lambda x: json.loads(x.decode('utf-8'))
