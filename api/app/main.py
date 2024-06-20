@@ -30,7 +30,9 @@ def consume_messages():
         )
         logging.info("Kafka Consumer has started listening")
         for message in consumer:
-            logging.info(f"Consumed message: {message.value}")
+            # Convert message.value to a JSON-formatted string with indentation for better readability
+            formatted_message = json.dumps(message.value, indent=2, sort_keys=True)
+            logging.info(f"Consumed message: {formatted_message}")
     except Exception as e:
         logging.error(f"Error in Kafka consumer: {e}")
 

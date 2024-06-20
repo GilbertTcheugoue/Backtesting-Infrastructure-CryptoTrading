@@ -1,27 +1,45 @@
-import yfinance as yf
 from confluent_kafka import Producer
+import yfinance as yf
+import json
+import time
 
-def fetch_and_send_stock_data(symbol):
-  # Fetch stock data
-  stock = yf.Ticker(symbol)
-  hist = stock.history(period="1d")  # For example, fetch today's data
+# Callback function to handle delivery reports
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Message delivery failed: {err}")
+    else:
+        print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
-  # Prepare data for sending to Kafka
-  data = hist.iloc[0].to_dict()
-  data['symbol'] = symbol  # Add the symbol to the data
+def fetch_and_send_stock_data(symbol, period="1d", max_retries=2):
+    # Fetch stock data
+    stock = yf.Ticker(symbol)
+    hist = stock.history(period=period)  # Fetch data for the specified period
 
-  # Kafka configuration
-  conf = {
-    'bootstrap.servers': "localhost:9092"
-  }  # Can be adjusted
+    # Kafka configuration
+    conf = {'bootstrap.servers': "localhost:9094"}
+    producer = Producer(**conf)
+    topic = 'stock_data'
 
-  # Create Kafka producer
-  producer = Producer(**conf)
-  topic = 'stock_data'
+    # Iterate over each row in the DataFrame
+    for index, row in hist.iterrows():
+        # Prepare data for sending to Kafka
+        data = row.to_dict()
+        data['symbol'] = symbol  # Add the symbol to the data
+        data['date'] = index.strftime('%Y-%m-%d')  # Add the date to the data
 
-  # Send data to Kafka
-  producer.produce(topic, str(data).encode('utf-8'))
-  producer.flush()
+        # Attempt to send data to Kafka with retries
+        for attempt in range(max_retries):
+            try:
+                print(str(data))
+                producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
+                producer.flush()
+                break  # Exit the retry loop on success
+            except Exception as e:
+                print(f"Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                else:
+                    print("Max retries reached. Failed to send data to Kafka.")
 
-# Example usage
-fetch_and_send_stock_data("AAPL")
+# Example usage for a longer period, e.g., 5 days
+fetch_and_send_stock_data("AAPL", "5d")
