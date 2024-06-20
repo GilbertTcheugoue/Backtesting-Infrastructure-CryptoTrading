@@ -5,7 +5,7 @@ import logging
 import psycopg2
 
 logging.basicConfig(level=logging.INFO)
-print("RUNNING CONSUMER DATA PIPELINE")
+print("STARTING CONSUMER DATA PIPELINE")
 KAFKA_BROKER_URL = "kafka:9092"
 
 def connect_to_postgres_db():
@@ -34,6 +34,7 @@ def consume_messages():
 
     Returns:
         None
+    
     """
     try:
         consumer = KafkaConsumer(
