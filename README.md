@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-- In your terminal run:
+In your terminal run:
 
 ```bash
 make up
