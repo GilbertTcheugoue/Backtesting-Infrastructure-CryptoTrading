@@ -1,7 +1,13 @@
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import Base, Dim_Users
+from models import Base, Dim_Users, Dim_Assets
+
 
 @pytest.fixture(scope='module')
 def db_engine():
@@ -26,3 +32,13 @@ def test_user_creation(db_session):
   user = db_session.query(Dim_Users).filter_by(UserName='testuser').first()
   assert user is not None
   assert user.Email == 'test@example.com'
+
+def test_asset_creation(db_session):
+    new_asset = Dim_Assets(AssetName='Bitcoin', AssetType='Cryptocurrency', TickerSymbol='BTC')
+    db_session.add(new_asset)
+    db_session.commit()
+
+    asset = db_session.query(Dim_Assets).filter_by(TickerSymbol='BTC').first()
+    assert asset is not None
+    assert asset.AssetName == 'Bitcoin'
+
