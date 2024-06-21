@@ -1,4 +1,7 @@
-.PHONY: run-dev down clean build up
+.PHONY: run-dev down clean build up build-api build-pipeline run
+
+build-all:
+	docker compose build
 
 run:
 	make down

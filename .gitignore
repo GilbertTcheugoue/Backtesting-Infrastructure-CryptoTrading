@@ -1,6 +1,9 @@
 data
 node_modules
 
+# AIRFLOW
+logs
+
 # IDE
 .idea
 
