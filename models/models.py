@@ -86,6 +86,8 @@ class Fact_Backtests(Base):
   TradeCount = Column(Integer)
   WinningTrades = Column(Integer)
   LosingTrades = Column(Integer)
+  StartPortfolio = Column(Numeric(18, 4))
+  FinalPortfolio = Column(Numeric(18, 4))
 
 class Fact_StockPrices(Base):
   __tablename__ = 'fact_stock_prices'
