@@ -56,14 +56,17 @@ async def produce_message(message: dict):
     producer.flush()
     return {"message": "Produced to Kafka", "data": message}
 
+@app.get("/")
+async def hello():
+    return {"message": "Hello World"}
 
 # To run the Kafka consumer concurrently with your FastAPI application, you can use asyncio to create a background task. 
 # However, since KafkaConsumer from kafka-python is not inherently asynchronous, you might run it in a separate thread or process, or use an asynchronous Kafka client like aiokafka.
 # For simplicity, here's how you might start the consumer in a separate thread:
 
-def start_consumer():
-    thread = threading.Thread(target=consume_messages)
-    thread.daemon = True
-    thread.start()
+# def start_consumer():
+#     thread = threading.Thread(target=consume_messages)
+#     thread.daemon = True
+#     thread.start()
 
-start_consumer()
+# start_consumer()

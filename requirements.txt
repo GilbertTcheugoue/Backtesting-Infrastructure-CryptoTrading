@@ -12,3 +12,6 @@ confluent-kafka
 rich
 fastapi
 psycopg2-binary
+SQLAlchemy
+alembic
+pytest

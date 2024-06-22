@@ -24,4 +24,4 @@ ADD ./app /code/app
 # Use start_and_watch.sh to start the app and handle restarts on files changes
 # CMD ["./start_and_watch.sh"]
 
-CMD uvicorn app.main:app --reload
+CMD uvicorn app.main:app --reload --port 8000

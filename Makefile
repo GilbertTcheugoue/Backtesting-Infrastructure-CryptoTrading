@@ -1,4 +1,7 @@
-.PHONY: run-dev down clean build up
+.PHONY: run-dev down clean build up build-api build-pipeline run
+
+build-all:
+	docker compose build
 
 run:
 	make down
@@ -21,6 +24,9 @@ up:
 down:
 	docker compose down
 
+test:
+	pytest -v -s tests
+	
 clean:
 	make down
 	docker volume rm $(shell docker volume ls -qf dangling=true)

@@ -5,7 +5,7 @@
 - Fork the repository
 - Clone the repository you just forked using `git clone`
 
-- In your terminal:
+In your terminal:
 
 ```bash
 cd Backtesting-Infrastructure-CryptoTrading

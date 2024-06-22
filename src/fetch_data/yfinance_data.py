@@ -3,6 +3,12 @@ import yfinance as yf
 import json
 import time
 
+# If you are running the Kafka broker locally, use the following URL
+KAFKA_BROKER_URL = "localhost:9094"
+
+# If you are running the Kafka broker in a Docker container, use the following URL
+# KAFKA_BROKER_URL = "kafka:9092"
+
 # Callback function to handle delivery reports
 def delivery_report(err, msg):
     if err is not None:
@@ -16,7 +22,7 @@ def fetch_and_send_stock_data(symbol, period="1d", max_retries=2):
     hist = stock.history(period=period)  # Fetch data for the specified period
 
     # Kafka configuration
-    conf = {'bootstrap.servers': "localhost:9094"}
+    conf = {'bootstrap.servers': KAFKA_BROKER_URL}
     producer = Producer(**conf)
     topic = 'stock_data'
 
@@ -43,3 +49,5 @@ def fetch_and_send_stock_data(symbol, period="1d", max_retries=2):
 
 # Example usage for a longer period, e.g., 5 days
 fetch_and_send_stock_data("AAPL", "5d")
+
+# TODO - split the fetch_and_send_stock_data function into two separate functions
