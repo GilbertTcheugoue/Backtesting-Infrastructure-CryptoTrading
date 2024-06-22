@@ -1,6 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, create_engine
 from sqlalchemy.orm import relationship
 from .base import Base  # Assuming base.py contains the declarative base
+
+from sqlalchemy import create_engine
+
+# Create the postgresql database engine
+DATABASE_URL = "postgresql://postgres:billna1@localhost:5432/trading_data"
+engine = create_engine(DATABASE_URL)
+Base.metadata.create_all(engine)
 
 class Dim_Date(Base):
   __tablename__ = 'dim_date'
