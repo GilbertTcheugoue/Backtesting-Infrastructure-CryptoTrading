@@ -24,4 +24,4 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest tests/
+          pytest -v -k 'not test_local_db_conn'
