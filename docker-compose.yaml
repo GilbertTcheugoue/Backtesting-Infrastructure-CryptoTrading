@@ -285,7 +285,7 @@ services:
     ports:
       - "8089:8000"
     environment:
-    - KAFKA_BROKER_URL=kafka://kafka:9092
+      KAFKA_BROKER_URL: "kafka://kafka:9092"
 
   data-pipeline:
     build: ./data_pipeline  # The Dockerfile is in this directory
