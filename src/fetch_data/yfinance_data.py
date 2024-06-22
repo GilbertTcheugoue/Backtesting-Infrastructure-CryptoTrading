@@ -3,7 +3,11 @@ import yfinance as yf
 import json
 import time
 
-KAFKA_BROKER_URL = "kafka:9092"
+# If you are running the Kafka broker locally, use the following URL
+KAFKA_BROKER_URL = "localhost:9094"
+
+# If you are running the Kafka broker in a Docker container, use the following URL
+# KAFKA_BROKER_URL = "kafka:9092"
 
 # Callback function to handle delivery reports
 def delivery_report(err, msg):
