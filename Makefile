@@ -24,6 +24,9 @@ up:
 down:
 	docker compose down
 
+test:
+	pytest -v -s tests
+	
 clean:
 	make down
 	docker volume rm $(shell docker volume ls -qf dangling=true)
