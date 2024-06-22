@@ -36,32 +36,33 @@ session.commit()  # Commit once after adding all new assets
 for stock in top_5_stocks:
   ticker = stock["ticker"]
   stock_data = yf.Ticker(ticker)
-  hist = stock_data.history(period="1d")
+  hist = stock_data.history(period="1mo")
   
   # Get the AssetID
   asset = session.query(Dim_Assets).filter_by(TickerSymbol=ticker).one()
   asset_id = asset.AssetID
   
   for index, row in hist.iterrows():
-    # Convert date to DateKey format
     date_key = int(index.strftime('%Y%m%d'))
-    # Check if the date exists in Dim_Date, if not, create a new date entry
+    # Ensure the date entry exists
     date_entry = session.query(Dim_Date).filter_by(DateKey=date_key).first()
     if not date_entry:
       date_entry = Dim_Date(DateKey=date_key, Date=index.date(), Year=index.year, Quarter=index.quarter, Month=index.month, Day=index.day)
       session.add(date_entry)
       session.commit()
     
-    # Convert NumPy types to native Python types using .item()
-    stock_price = Fact_StockPrices(
-      DateKey=date_key,
-      AssetID=asset_id,
-      Open=row['Open'].item(),
-      High=row['High'].item(),
-      Low=row['Low'].item(),
-      Close=row['Close'].item()
-    )
-    session.add(stock_price)
+    # Check if a stock price for this date and asset already exists
+    existing_stock_price = session.query(Fact_StockPrices).filter_by(DateKey=date_key, AssetID=asset_id).first()
+    if not existing_stock_price:
+      stock_price = Fact_StockPrices(
+        DateKey=date_key,
+        AssetID=asset_id,
+        Open=row['Open'].item(),
+        High=row['High'].item(),
+        Low=row['Low'].item(),
+        Close=row['Close'].item()
+      )
+      session.add(stock_price)
   session.commit()
 
 session.close()
