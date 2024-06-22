@@ -15,6 +15,9 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 # Copy app files
 ADD ./app /code/app
 
+# Copy the wait-for-it.sh script
+ADD ./scripts/wait-for-it.sh /code/wait-for-it.sh
+
 # Copy start_and_watch.sh script
 # ADD ./start_and_watch.sh /code/start_and_watch.sh
 
@@ -24,4 +27,4 @@ ADD ./app /code/app
 # Use start_and_watch.sh to start the app and handle restarts on files changes
 # CMD ["./start_and_watch.sh"]
 
-CMD uvicorn app.main:app --reload --port 8000
+CMD ["./wait-for-it.sh", "kafka:9092", "--", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload", "--port", "8000"]
