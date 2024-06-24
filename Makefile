@@ -1,4 +1,24 @@
-.PHONY: run-dev down clean build up build-api build-pipeline run
+.PHONY: run-dev down clean build up build-api build-pipeline run test test_db create_trading_database
+
+# Makefile for managing PostgreSQL users in Docker
+
+POSTGRES_CONTAINER := postgres  # Adjust if your container name is different
+POSTGRES_USER := airflow
+
+create-superuser:
+	docker compose exec -it $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -c "\
+	CREATE USER postgres WITH SUPERUSER CREATEDB CREATEROLE LOGIN PASSWORD 'billna1';"
+
+drop-user:
+	docker compose exec -it $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -c "DROP USER postgres;"
+
+# Create a database trading data
+create-db:
+	docker compose exec -it $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -c "CREATE DATABASE trading_data;"
+
+# Drop the trading data database
+drop-db:
+	docker compose exec -it $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -c "DROP DATABASE IF EXISTS trading_data;"
 
 build-all:
 	docker compose build
@@ -39,3 +59,13 @@ test_db:
 	done
 	docker compose exec postgres sh -c 'psql -U postgres -c "drop database if exists tests;" && psql -U postgres -c "create database tests;"'
 
+create_trading_database:
+	docker compose exec -u postgres postgres psql postgres -c "CREATE DATABASE trading_data;"
+
+build-base-image:
+	docker build -t base-image-gold -f Dockerfile.base .
+
+build-base-image-restart:
+	make build-base-image
+	make build-all
+	make run
