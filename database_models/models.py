@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Numeric, JSON, create_engine
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from .base import Base  # Assuming base.py contains the declarative base
 
 import os
@@ -8,10 +8,13 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:billna1@localhost:5432/trading_data")
 
-# Create the postgresql database engine
-# DATABASE_URL = "postgresql://postgres:billna1@postgres:5432/trading_data"
-engine = create_engine(DATABASE_URL)
-Base.metadata.create_all(engine)
+# Function to initialize the database
+def init_db():
+  engine = create_engine(DATABASE_URL)
+  Base.metadata.create_all(engine)
+  return scoped_session(sessionmaker(bind=engine))
+
+# NB: init_db() must be called explicitly to initialize the database.
 
 class Dim_Date(Base):
   __tablename__ = 'dim_date'
