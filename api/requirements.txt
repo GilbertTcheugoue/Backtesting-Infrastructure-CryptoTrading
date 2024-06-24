@@ -4,3 +4,6 @@ kafka-python
 rich
 coloredlogs
 colorama
+passlib
+confluent_kafka
+python-jose
