@@ -17,6 +17,9 @@ COPY ./src/shared $APP_HOME/shared
 # Install system-level dependencies
 RUN apk add --no-cache gcc musl-dev linux-headers  # For compiling dependencies
 
+# Install entr 
+RUN apk add --update entr
+
 # Install librdkafka development package
 RUN apk add librdkafka-dev 
 
