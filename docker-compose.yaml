@@ -280,6 +280,7 @@ services:
     build: ./api
     volumes:
       - ./api/app:/code/app
+      - ./src/shared:/code/shared
     depends_on:
       - kafka
     ports:
@@ -291,6 +292,7 @@ services:
     build: ./data_pipeline  # The Dockerfile is in this directory
     volumes:
       - ./data_pipeline:/app
+      - ./src/shared:/app/shared
     depends_on:
       - kafka
       - postgres
