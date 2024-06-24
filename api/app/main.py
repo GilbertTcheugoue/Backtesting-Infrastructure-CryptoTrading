@@ -78,10 +78,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # In a real application, you'd fetch user data from your database
+    # In a real application, we fetch user data from your database
     # For this example, we'll just hardcode a user
 
-    # **Important:**  Replace this with your actual user retrieval logic
+    # **Important:**  Replace this with actual user retrieval logic
     # user = None  # Fetch user from your database based on form_data.username
     user = {
         "username": "doen",
