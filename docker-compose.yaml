@@ -288,11 +288,12 @@ services:
     environment:
       KAFKA_BROKER_URL: "kafka:9092"
 
-  data-pipeline:
-    build: ./data_pipeline  # The Dockerfile is in this directory
+  kafka-consumer:
+    build: ./kafka_consumer    # The Dockerfile is in this directory
     volumes:
-      - ./data_pipeline:/app
+      - ./kafka_consumer:/app
       - ./src/shared:/app/shared
+      - ./database_models:/app/database_models
     depends_on:
       - kafka
       - postgres
@@ -303,6 +304,19 @@ services:
       POSTGRES_DB: trading_data
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
+
+  database-service:
+    build: ./database_service
+    environment:
+    - DATABASE_URL=postgresql://user:password@postgres:5432/dbname
+    ports:
+      - 8001:8001
+    volumes:
+      - ./database_models:/app/database_models
+      - ./alembic:/app/alembic
+      - ./src/shared:/app/shared
+    depends_on:
+      - postgres
 
 volumes:
   postgres-db-volume:

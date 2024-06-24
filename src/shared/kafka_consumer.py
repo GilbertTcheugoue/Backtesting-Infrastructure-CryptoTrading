@@ -51,7 +51,7 @@ def consume_messages(consumer):
         yield json.loads(msg.value().decode('utf-8'))  # Deserialize the message
 
 
-def create_and_consume_messages(topic_name, broker_url=KAFKA_BROKER_URL, group_id_suffix='consumer', timeout=1.0, process_message_callback=None):
+def create_and_consume_messages(topic_name, broker_url=KAFKA_BROKER_URL, group_id_suffix='consumer', timeout=1.0):
     """Creates a consumer, consumes messages, and processes them with a callback."""
     group_id = f"{topic_name}_{group_id_suffix}"
     conf = {

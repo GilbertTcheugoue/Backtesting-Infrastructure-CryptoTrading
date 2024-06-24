@@ -1,0 +1,5 @@
+kafka-python
+psycopg2-binary
+websocket-client
+python-dotenv
+confluent_kafka

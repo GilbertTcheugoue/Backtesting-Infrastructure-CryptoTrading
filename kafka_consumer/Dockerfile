@@ -1,10 +1,10 @@
-FROM python:3.9-alpine
+FROM python:3.9-slim-buster
 
 # Set the working directory
 WORKDIR /app
 
-# Update and install entr
-RUN apk update && apk add entr
+# update and install entr for file watching
+RUN apt-get update && apt-get install -y entr
 
 # Update pip
 RUN pip install --upgrade pip
@@ -14,8 +14,8 @@ COPY ./requirements.txt /app/
 RUN pip install -r requirements.txt --no-cache-dir
 
 # Copy your consumer script into the container
-COPY ./kafka_consumer_db_inserter.py /app/
+COPY ./kafka_consumer.py /app/
 
 # Run the consumer script when the container starts
 # CMD ["python", "kafka_consumer_db_inserter.py"]
-CMD ls *.py | entr -n -r python kafka_consumer_db_inserter.py
+CMD ls *.py | entr -n -r python kafka_consumer.py
