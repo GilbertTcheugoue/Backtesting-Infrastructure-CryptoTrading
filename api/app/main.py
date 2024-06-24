@@ -85,7 +85,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # user = None  # Fetch user from your database based on form_data.username
     user = {
         "username": "doen",
-        "email": "Helsn3#21KQ!",
+        "email": "doentest@gmail.com",
         "hashed_password": "$2b$12$8dUj8h2tzXLvej8kHwYZrejTHLv6Zq5rKv34Nijo8cHGb7WLimiEm"
     }
 
@@ -102,7 +102,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.get("username")}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "username": user.get("username")}
 
 
 @app.post("/register")
