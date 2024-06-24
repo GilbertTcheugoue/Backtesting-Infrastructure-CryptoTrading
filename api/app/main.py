@@ -19,7 +19,8 @@ from shared import send_message_to_kafka
 
 # topic_name = "backtest_results_testing"
 
-USERS_REGISRATION_TOPIC = "users_registration"
+USER_REGISRATION_TOPIC = "user_registration"
+USER_LOGIN_TOPIC = "user_login"
 
 app = FastAPI()
 
@@ -36,7 +37,7 @@ logging.basicConfig(
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "secret")  
 ALGORITHM = os.getenv("ALGORITHM", "HS256")  
-ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,10 +82,16 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # For this example, we'll just hardcode a user
 
     # **Important:**  Replace this with your actual user retrieval logic
-    user = None  # Fetch user from your database based on form_data.username
+    # user = None  # Fetch user from your database based on form_data.username
+    user = {
+        "username": "doen",
+        "email": "Helsn3#21KQ!",
+        "hashed_password": "$2b$12$8dUj8h2tzXLvej8kHwYZrejTHLv6Zq5rKv34Nijo8cHGb7WLimiEm"
+    }
+
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    hashed_password = user.hashed_password
+    hashed_password = user.get("hashed_password")
 
     # Verify password
     if not pwd_context.verify(form_data.password, hashed_password):
@@ -93,7 +100,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # Create and return JWT token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.get("username")}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
